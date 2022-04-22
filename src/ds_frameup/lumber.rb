@@ -129,6 +129,12 @@ module DS
         _buck(group, position, rotation)
       end
 
+      def bucks_vertical(group, position, num_bucks)
+        buck = buck_vertical(group, position)
+        bucks = array(group, buck, Geom::Vector3d.new(@par[:sheet_length], 0, 0), num_bucks)
+        bucks << buck
+      end
+
       def buck_horizontal(group, position)
         rotation = Geom::Transformation.rotation([0, 0, 0], [-1, 0, 0], 90.degrees)
         _buck(group, position, rotation)
