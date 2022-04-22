@@ -8,5 +8,4 @@ Given this:
 the plugin will produce this:
 ![](images/Screenshot (2).png)
 
-complete with framing and insulation.
 
