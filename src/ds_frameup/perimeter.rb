@@ -40,7 +40,7 @@ module FrameUp
         when [1, 0, 0]
           bucks << frame_right(group_bucks, bounds)
         when [-1, 0, 0]
-          bucks << frame_left(group_bucks, bounds)
+          bucks += frame_left(group_bucks, bounds)
         when [0, 0, 1]
           bucks += frame_top(group_bucks, group_plates, bounds)
         when [0, 0, -1]
@@ -87,7 +87,9 @@ module FrameUp
     def frame_left(group, bounds)
       p = bounds.min
       p.y += @par[:sheet_ext_thickness] + @par[:strap_thickness]
-      @lumber.buck_vertical(group, p)
+      num_bucks = (bounds.depth / @par[:sheet_length]).to_i
+      @lumber.bucks_vertical(group, p, num_bucks)
+      # @lumber.buck_vertical(group, p)
     end
 
     def frame_top(group_bucks, group_plates, bounds)
