@@ -5,6 +5,7 @@ Backup of *.layout
 
 # Archives
 *.rbz
+/releases
 
 # RuboCop
 .rubocop-https-*-yml
@@ -18,3 +19,6 @@ Backup of *.layout
 
 # Bundler
 Gemfile.lock
+
+/models
+/reports
