@@ -84,7 +84,7 @@ module DS
         frame_sheathing_exterior(@group_top)
         frame_strapping(@group_top)
         frame_perimeter(@group_top)
-        @insulation.fill(@group_top, @group)
+        # @insulation.fill(@group_top, @group)
         @group.visible = false
         Sketchup.active_model.selection.clear
       end

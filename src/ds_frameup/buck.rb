@@ -27,10 +27,14 @@ module DS
         bucks = []
         bucks << @lumber.buck_vertical(group, buck_l_position)
         bucks << @lumber.buck_vertical(group, buck_r_position)
+        intersect(bucks, shrink_back(@modifier))
+        subtract(bucks, shrink_edges(@modifier))
+        bucks.clear
         bucks << @lumber.buck_horizontal(group, buck_t_position)
         bucks << @lumber.buck_horizontal(group, buck_b_position)
         intersect(bucks, shrink_back(@modifier))
-        subtract(bucks, shrink_edges(@modifier))
+        # Horizontal panels overlap with vertical on right side of buck
+        subtract(bucks, shrink_edges_except_left_facing(@modifier))
       end
 
       def shrink_back(modifier)
@@ -53,6 +57,19 @@ module DS
         faces.each do |face|
           case normal(face)
           when [1, 0, 0], [-1, 0, 0], [0, 0, 1], [0, 0, -1]
+            face.pushpull(-@par[:buck_thickness])
+          end
+        end
+        copy
+      end
+
+      def shrink_edges_except_left_facing(modifier)
+        copy = modifier.copy
+        copy.name = 'buck_shrink_edges_modifier'
+        faces = copy.entities.grep(Sketchup::Face)
+        faces.each do |face|
+          case normal(face)
+          when [1, 0, 0], [0, 0, 1], [0, 0, -1]
             face.pushpull(-@par[:buck_thickness])
           end
         end

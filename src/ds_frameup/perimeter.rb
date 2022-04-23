@@ -33,27 +33,31 @@ module FrameUp
       set_layer(group_plates, 'framing')
       set_color(group_plates, 'framing', COLOR_FRAMING)
 
+      bucks_horizontal = []
+      bucks_vertical = []
       @panel.faces_perimeter.each do |face|
         bounds = face.bounds
-        bucks = []
         case normal(face)
         when [1, 0, 0]
-          bucks << frame_right(group_bucks, bounds)
+          bucks_vertical += frame_right(group_bucks, bounds)
         when [-1, 0, 0]
-          bucks += frame_left(group_bucks, bounds)
+          bucks_vertical += frame_left(group_bucks, bounds)
         when [0, 0, 1]
-          bucks += frame_top(group_bucks, group_plates, bounds)
+          bucks_horizontal += frame_top(group_bucks, group_plates, bounds)
         when [0, 0, -1]
-          bucks += frame_bottom(group_bucks, group_plates, bounds)
+          bucks_horizontal += frame_bottom(group_bucks, group_plates, bounds)
         end
-        intersect(bucks, shrink_back(@panel.group))
-        subtract(bucks, shrink_edges(@panel.group))
       end
+      intersect(bucks_vertical, shrink_back(@panel.group))
+      # Horizontal bucks overlap with veritical bucks on right end
+      intersect(bucks_horizontal, shrink_back_and_end(@panel.group))
+      # One horizontal buck is too long if corner window is on left end
+      subtract(bucks_horizontal, shrink_edges(@panel.group))
     end
 
     def shrink_back(modifier)
       copy = modifier.copy
-      copy.name = 'perimeter_shrunk_back_modifier'
+      copy.name = 'shrink_back_modifier'
       faces = copy.entities.grep(Sketchup::Face)
       faces.each do |face|
         case normal(face)
@@ -64,9 +68,24 @@ module FrameUp
       copy
     end
 
+    def shrink_back_and_end(modifier)
+      copy = modifier.copy
+      copy.name = 'shrink_back_and_end_modifier'
+      faces = copy.entities.grep(Sketchup::Face)
+      faces.each do |face|
+        case normal(face)
+        when [0, 1, 0]
+          face.pushpull(-@par[:drywall_thickness]) if face.plane.last.abs == @panel.thickness
+        when [1, 0, 0]
+          face.pushpull(-@par[:buck_thickness])
+        end
+      end
+      copy
+    end
+
     def shrink_edges(modifier)
       copy = modifier.copy
-      copy.name = 'perimeter_shrunk_edges_modifier'
+      copy.name = 'shrink_edges_modifier'
       faces = copy.entities.grep(Sketchup::Face)
       faces.each do |face|
         case normal(face)
@@ -81,7 +100,8 @@ module FrameUp
       p = bounds.min
       p.x -= @par[:buck_thickness]
       p.y += @par[:sheet_ext_thickness] + @par[:strap_thickness]
-      @lumber.buck_vertical(group, p)
+      num_bucks = (bounds.depth / @par[:sheet_length]).to_i
+      @lumber.bucks_vertical(group, p, num_bucks)
     end
 
     def frame_left(group, bounds)
@@ -89,7 +109,6 @@ module FrameUp
       p.y += @par[:sheet_ext_thickness] + @par[:strap_thickness]
       num_bucks = (bounds.depth / @par[:sheet_length]).to_i
       @lumber.bucks_vertical(group, p, num_bucks)
-      # @lumber.buck_vertical(group, p)
     end
 
     def frame_top(group_bucks, group_plates, bounds)

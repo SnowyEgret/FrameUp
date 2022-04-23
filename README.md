@@ -1,11 +1,11 @@
 # FrameUp
 
-A SketchUp plugin to fully detail a double stud wall prefab panel.
+This SketchUp extension fully details a double stud wall prefab panel.
 
 Given this:
 ![](./images/before.png)
 
-the plugin will produce this:
+the extension generates this:
 ![](./images/after.png)
 
 
