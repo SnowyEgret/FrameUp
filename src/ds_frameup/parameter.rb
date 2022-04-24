@@ -6,8 +6,8 @@ module FrameUp
     def initialize(prompt, options_hash)
       @value = options_hash.keys.first
       @prompt = prompt
-      default = options_hash.values.first
-      @default = default
+      # default = options_hash.values.first
+      @default = options_hash.values.first
       @list = bar_separated_list(options_hash.values)
     end
 

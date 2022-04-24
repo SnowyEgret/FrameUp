@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DS
 module FrameUp
 
@@ -124,6 +126,30 @@ module FrameUp
 
     def update
       @parameters = merge_dialog_parameters_and_constants
+    end
+
+    def prompts
+      prompts = []
+      @dialog_parameters.values.each do |par|
+        prompts << par.prompt
+      end
+      prompts
+    end
+
+    def defaults
+      defs = []
+      @dialog_parameters.values.each do |par|
+        defs << par.default
+      end
+      defs
+    end
+
+    def lists
+      lists = []
+      @dialog_parameters.values.each do |par|
+        lists << par.list
+      end
+      lists
     end
 
     def self.test

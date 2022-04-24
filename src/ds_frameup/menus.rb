@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DS
 module FrameUp
 
@@ -6,7 +8,7 @@ module FrameUp
 
   class Menus
     def initialize
-      @parameters = Parameters.new
+      @parameters = init_parameters
 
       return if file_loaded?(__FILE__)
 
@@ -17,7 +19,7 @@ module FrameUp
       UI.add_context_menu_handler do |context_menu|
         context_menu_frameup = context_menu.add_submenu('FrameUp')
         cmd = UI::Command.new('Frame Panel') { frame_panel }
-        cmd.menu_text = 'Frame Panel'.freeze
+        cmd.menu_text = 'Frame Panel'
         # cmd.small_icon = 'icons/foo.png'
         # cmd.status_bar_text = 'foo'
         cmd.set_validation_proc do
@@ -29,35 +31,51 @@ module FrameUp
       file_loaded(__FILE__)
     end
 
-    def prompts(dialog_parameters)
-      prompts = []
-      dialog_parameters.values.each do |par|
-        prompts << par.prompt
-      end
-      prompts
+    def init_parameters
+      Parameters.new
     end
 
-    def defaults(dialog_parameters)
-      defaults = []
-      dialog_parameters.values.each do |par|
-        defaults << par.default
-      end
-      defaults
-    end
+    # def prompts(dialog_parameters)
+    #   prompts = []
+    #   dialog_parameters.values.each do |par|
+    #     prompts << par.prompt
+    #   end
+    #   prompts
+    # end
 
-    def lists(dialog_parameters)
-      lists = []
-      dialog_parameters.values.each do |par|
-        lists << par.list
-      end
-      lists
-    end
+    # # TODO: This works when reading but not saving
+    # def defaults(dialog_parameters)
+    #   defaults = read_defaults
+    #   return defaults unless defaults.nil?
+
+    #   defaults = []
+    #   dialog_parameters.values.each do |par|
+    #     defaults << par.default
+    #   end
+    #   defaults
+    # end
+
+    # def lists(dialog_parameters)
+    #   lists = []
+    #   dialog_parameters.values.each do |par|
+    #     lists << par.list
+    #   end
+    #   lists
+    # end
 
     def show_parameters_dialog
       dialog_pars = @parameters.dialog_parameters
       constants = @parameters.constants
 
-      inputs = UI.inputbox(prompts(dialog_pars), defaults(dialog_pars), lists(dialog_pars), 'FrameUp Parameters')
+      defs = read_defaults
+      defs = @parameters.defaults if defs.nil?
+      p defs
+      p @parameters.prompts
+      p @parameters.lists
+
+      inputs = UI.inputbox(@parameters.prompts, defs, @parameters.lists, 'FrameUp Preferences')
+      p inputs
+      # inputs = UI.inputbox(prompts(dialog_pars), defaults(dialog_pars), lists(dialog_pars), 'FrameUp Parameters')
       return unless inputs
 
       input = inputs[0]
@@ -107,6 +125,16 @@ module FrameUp
       constants[:drywall_thickness] = @parameters.thicknesses[type]
 
       @parameters.update
+      save_defaults
+    end
+
+    def save_defaults
+      Sketchup.active_model.set_attribute('defaults', :defaults, @parameters.defaults)
+      # Sketchup.active_model.set_attribute('defaults', :defaults, defaults(@parameters.dialog_parameters))
+    end
+
+    def read_defaults
+      Sketchup.active_model.get_attribute('defaults', :defaults)
     end
 
     def frame_panel

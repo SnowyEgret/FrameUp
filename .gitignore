@@ -21,4 +21,7 @@ Backup of *.layout
 Gemfile.lock
 
 /models
+
+# Reports
 /reports
+*.csv
