@@ -28,14 +28,18 @@ module DS
         @faces_hash = init_faces_hash
         @dimensions = init_dimensions
         check_axes
-        @group_top = init_group_top
         @walls = init_walls
         @openings = init_openings
         @perimeter = Perimeter.new(@par, self)
-        @strapping = Strapping.new(@par, position_strapping, @group.copy)
-        @drywall = Drywall.new(@par, position_drywall, @group.copy)
-        @sheathing_interior = SheathingInterior.new(@par, position_sheathing_int, shrink(@group))
-        @sheathing_exterior = SheathingExterior.new(@par, position_sheathing_ext, @group.copy)
+        # TODO: Pass modifiers to #frame methods instead
+        # @strapping = Strapping.new(@par, position_strapping, @group.copy)
+        @strapping = Strapping.new(@par, position_strapping)
+        # @drywall = Drywall.new(@par, position_drywall, @group.copy)
+        @drywall = Drywall.new(@par, position_drywall)
+        # @sheathing_interior = SheathingInterior.new(@par, position_sheathing_int, shrink(@group))
+        @sheathing_interior = SheathingInterior.new(@par, position_sheathing_int)
+        # @sheathing_exterior = SheathingExterior.new(@par, position_sheathing_ext, @group.copy)
+        @sheathing_exterior = SheathingExterior.new(@par, position_sheathing_ext)
         @insulation = Insulation.new(@par)
       end
 
@@ -53,7 +57,6 @@ module DS
 
       def position_strapping
         p = position.clone
-        # p.y += @par[:strap_thickness]
         p
       end
 
@@ -77,23 +80,23 @@ module DS
       end
 
       def frame
-        # group = @group.parent
-        # TODO: Create top group here, not in constructior
-        frame_openings(@group_top)
-        frame_walls(@group_top)
-        frame_drywall(@group_top)
-        frame_sheathing_interior(@group_top)
-        frame_sheathing_exterior(@group_top)
-        frame_strapping(@group_top)
-        frame_perimeter(@group_top)
-        @insulation.fill(@group_top, @group)
+        top = init_group_top
+        frame_openings(top)
+        frame_walls(top)
+        frame_drywall(top)
+        frame_sheathing_interior(top)
+        frame_sheathing_exterior(top)
+        frame_strapping(top)
+        frame_perimeter(top)
+        @insulation.fill(top, @group)
         @group.visible = false
         Sketchup.active_model.selection.clear
       end
 
       def frame_openings(group)
         @openings.each do |opening|
-          opening.frame(group)
+          # No @group.copy here
+          opening.frame(group, @group)
         end
       end
 
@@ -108,19 +111,19 @@ module DS
       end
 
       def frame_drywall(group)
-        @drywall.frame(group)
+        @drywall.frame(group, @group.copy)
       end
 
       def frame_sheathing_interior(group)
-        @sheathing_interior.frame(group)
+        @sheathing_interior.frame(group, modifier_sheathing_interior)
       end
 
       def frame_sheathing_exterior(group)
-        @sheathing_exterior.frame(group)
+        @sheathing_exterior.frame(group, @group.copy)
       end
 
       def frame_strapping(group)
-        @strapping.frame(group)
+        @strapping.frame(group, @group.copy)
       end
 
       def init_faces
@@ -304,9 +307,10 @@ module DS
 
           bounds_wall = Geom::BoundingBox.new.add(min, max)
 
-          openings << Opening.new(@par, bounds_wall, bounds_opening, self)
           # TODO: Simplify contstructor
           # @openings << Opening.new(bounds_opening, height_wall, height_ledge)
+          openings << Opening.new(@par, bounds_wall, bounds_opening, self)
+          # openings << Opening.new(@par, bounds_wall, bounds_opening)
         end
         openings
       end
@@ -383,9 +387,9 @@ module DS
         end
       end
 
-      def shrink(modifier)
-        copy = modifier.copy
-        copy.name = 'panel_shrunk_modifier'
+      def modifier_sheathing_interior
+        copy = @group.copy
+        copy.name = 'modifier_sheathing_interior'
         faces = copy.entities.grep(Sketchup::Face)
         faces.each do |face|
           case normal(face)
@@ -399,6 +403,23 @@ module DS
         end
         copy
       end
+
+      # def shrink(modifier)
+      #   copy = modifier.copy
+      #   copy.name = 'panel_shrunk_modifier'
+      #   faces = copy.entities.grep(Sketchup::Face)
+      #   faces.each do |face|
+      #     case normal(face)
+      #     when [0, 1, 0]
+      #       face.pushpull(-@par[:drywall_thickness]) if face.plane.last.abs == thickness
+      #     when [0, -1, 0]
+      #       face.pushpull(-@par[:sheet_ext_thickness] - @par[:strap_thickness])
+      #     when [1, 0, 0], [-1, 0, 0], [0, 0, 1], [0, 0, -1]
+      #       face.pushpull(-@par[:buck_thickness])
+      #     end
+      #   end
+      #   copy
+      # end
 
       def self.test
         model = Sketchup.active_model

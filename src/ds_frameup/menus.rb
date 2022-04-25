@@ -3,12 +3,13 @@
 module DS
 module FrameUp
 
+  require 'english.rb'
   Sketchup.require(File.join(PLUGIN_DIR, 'parameters'))
   Sketchup.require(File.join(PLUGIN_DIR, 'panel'))
 
   class Menus
     def initialize
-      @parameters = init_parameters
+      @parameters = Parameters.new
 
       return if file_loaded?(__FILE__)
 
@@ -31,51 +32,13 @@ module FrameUp
       file_loaded(__FILE__)
     end
 
-    def init_parameters
-      Parameters.new
-    end
-
-    # def prompts(dialog_parameters)
-    #   prompts = []
-    #   dialog_parameters.values.each do |par|
-    #     prompts << par.prompt
-    #   end
-    #   prompts
-    # end
-
-    # # TODO: This works when reading but not saving
-    # def defaults(dialog_parameters)
-    #   defaults = read_defaults
-    #   return defaults unless defaults.nil?
-
-    #   defaults = []
-    #   dialog_parameters.values.each do |par|
-    #     defaults << par.default
-    #   end
-    #   defaults
-    # end
-
-    # def lists(dialog_parameters)
-    #   lists = []
-    #   dialog_parameters.values.each do |par|
-    #     lists << par.list
-    #   end
-    #   lists
-    # end
-
     def show_parameters_dialog
       dialog_pars = @parameters.dialog_parameters
       constants = @parameters.constants
 
       defs = read_defaults
       defs = @parameters.defaults if defs.nil?
-      p defs
-      p @parameters.prompts
-      p @parameters.lists
-
       inputs = UI.inputbox(@parameters.prompts, defs, @parameters.lists, 'FrameUp Preferences')
-      p inputs
-      # inputs = UI.inputbox(prompts(dialog_pars), defaults(dialog_pars), lists(dialog_pars), 'FrameUp Parameters')
       return unless inputs
 
       input = inputs[0]
@@ -130,7 +93,6 @@ module FrameUp
 
     def save_defaults
       Sketchup.active_model.set_attribute('defaults', :defaults, @parameters.defaults)
-      # Sketchup.active_model.set_attribute('defaults', :defaults, defaults(@parameters.dialog_parameters))
     end
 
     def read_defaults
@@ -149,8 +111,13 @@ module FrameUp
     end
 
     def selection_valid?(selection)
+      begin
+        Panel.new(@parameters.parameters, selection.first)
+      rescue
+        warn $ERROR_INFO
+        return false
+      end
       return true unless selection.length > 1
-      # TODO: Instantiate a panel and catch exceptions
     end
   end
 end

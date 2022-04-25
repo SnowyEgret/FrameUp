@@ -48,16 +48,16 @@ module FrameUp
           bucks_horizontal += frame_bottom(group_bucks, group_plates, bounds)
         end
       end
-      intersect(bucks_vertical, shrink_back(@panel.group))
+      intersect(bucks_vertical, modifier_buck_vertical)
       # Horizontal bucks overlap with veritical bucks on right end
-      intersect(bucks_horizontal, shrink_back_and_end(@panel.group))
+      intersect(bucks_horizontal, modifier_intersect_horizontal)
       # One horizontal buck is too long if corner window is on left end
-      subtract(bucks_horizontal, shrink_edges(@panel.group))
+      subtract(bucks_horizontal, modifier_subtract_horizontal)
     end
 
-    def shrink_back(modifier)
-      copy = modifier.copy
-      copy.name = 'shrink_back_modifier'
+    def modifier_buck_vertical
+      copy = @panel.group.copy
+      copy.name = 'modifier_buck_vertical'
       faces = copy.entities.grep(Sketchup::Face)
       faces.each do |face|
         case normal(face)
@@ -68,8 +68,8 @@ module FrameUp
       copy
     end
 
-    def shrink_back_and_end(modifier)
-      copy = modifier.copy
+    def modifier_intersect_horizontal
+      copy = @panel.group.copy
       copy.name = 'shrink_back_and_end_modifier'
       faces = copy.entities.grep(Sketchup::Face)
       faces.each do |face|
@@ -83,8 +83,8 @@ module FrameUp
       copy
     end
 
-    def shrink_edges(modifier)
-      copy = modifier.copy
+    def modifier_subtract_horizontal
+      copy = @panel.group.copy
       copy.name = 'shrink_edges_modifier'
       faces = copy.entities.grep(Sketchup::Face)
       faces.each do |face|

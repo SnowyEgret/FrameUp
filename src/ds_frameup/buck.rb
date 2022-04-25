@@ -10,14 +10,14 @@ module DS
       include Trimmable
       include Util
 
-      def initialize(parameters, bounds, modifier)
+      def initialize(parameters, bounds)
         @par = parameters
-        @modifier = modifier
         @bounds = bounds
         @lumber = Lumber.new(parameters)
       end
 
-      def frame(group)
+      # def frame(group)
+      def frame(group, modifier)
         name = 'buck'
         group = group.entities.add_group
         group.name = name.capitalize
@@ -27,19 +27,19 @@ module DS
         bucks = []
         bucks << @lumber.buck_vertical(group, buck_l_position)
         bucks << @lumber.buck_vertical(group, buck_r_position)
-        intersect(bucks, shrink_back(@modifier))
-        subtract(bucks, shrink_edges(@modifier))
+        intersect(bucks, modifier_intersect(modifier))
+        subtract(bucks, modifier_subtract_vertical(modifier))
         bucks.clear
         bucks << @lumber.buck_horizontal(group, buck_t_position)
         bucks << @lumber.buck_horizontal(group, buck_b_position)
-        intersect(bucks, shrink_back(@modifier))
+        intersect(bucks, modifier_intersect(modifier))
         # Horizontal panels overlap with vertical on right side of buck
-        subtract(bucks, shrink_edges_except_left_facing(@modifier))
+        subtract(bucks, modifier_subtract_horizontal(modifier))
       end
 
-      def shrink_back(modifier)
+      def modifier_intersect(modifier)
         copy = modifier.copy
-        copy.name = 'buck_shrink_back_modifier'
+        copy.name = 'modifier_intersect'
         faces = copy.entities.grep(Sketchup::Face)
         faces.each do |face|
           case normal(face)
@@ -50,9 +50,9 @@ module DS
         copy
       end
 
-      def shrink_edges(modifier)
+      def modifier_subtract_vertical(modifier)
         copy = modifier.copy
-        copy.name = 'buck_shrink_edges_modifier'
+        copy.name = 'modifier_subtract_vertical'
         faces = copy.entities.grep(Sketchup::Face)
         faces.each do |face|
           case normal(face)
@@ -63,9 +63,9 @@ module DS
         copy
       end
 
-      def shrink_edges_except_left_facing(modifier)
+      def modifier_subtract_horizontal(modifier)
         copy = modifier.copy
-        copy.name = 'buck_shrink_edges_modifier'
+        copy.name = 'modifier_subtract_horizontal'
         faces = copy.entities.grep(Sketchup::Face)
         faces.each do |face|
           case normal(face)

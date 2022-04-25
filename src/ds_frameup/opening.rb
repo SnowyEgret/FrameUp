@@ -12,20 +12,18 @@ module DS
       #TODO: Simmplify constructotr
       # def initialize(bounds_opening, height_wall, height_ledge)
       # def initialize(bounds_wall, bounds_opening, height_ledge)
-      # TODO: Remove panel from constructor.
-      # Pass modifier to method frame instead and make ledge_height a parameter
       def initialize(parameters, bounds_wall, bounds_opening, panel)
+      # def initialize(parameters, bounds_wall, bounds_opening)
         @par = parameters
         @panel = panel
         @bounds_wall = bounds_wall
         @bounds_opening = bounds_opening
         @front = StudOpening.new(parameters, bounds_wall_front, bounds_opening)
         @back = StudOpening.new(parameters, bounds_wall_back, bounds_opening)
-        # TODO: Pass the modifier with method frame
-        @buck = Buck.new(parameters, bounds_opening, panel.group)
+        @buck = Buck.new(parameters, bounds_opening)
       end
 
-      def frame(group)
+      def frame(group, modifier)
         group = group.entities.add_group
         group.name = 'Opening'
         name = 'framing'
@@ -34,7 +32,7 @@ module DS
 
         @front.frame(group)
         @back.frame(group)
-        @buck.frame(group)
+        @buck.frame(group, modifier)
       end
 
       def bounds_wall_front

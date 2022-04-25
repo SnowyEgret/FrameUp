@@ -5,11 +5,11 @@ module FrameUp
 
   class Strapping < SheetBase
 
-    def initialize(parameters, position, modifier)
-      super(parameters, position, modifier)
+    def initialize(parameters, position)
+      super(parameters, position)
     end
 
-    def frame(group)
+    def frame(group, modifier)
       name = 'strapping'
       parent_group = group
       group = parent_group.entities.add_group
@@ -17,10 +17,10 @@ module FrameUp
       set_layer(group, name)
       set_color(group, name, COLOR_STRAPPING)
 
-      bounds = @modifier.definition.bounds
+      bounds = modifier.definition.bounds
       rows = (bounds.depth / @par[:strap_spacing]).to_i + 1
       straps = @lumber.straps(group, @position, rows, bounds.width)
-      intersect(straps, @modifier)
+      intersect(straps, modifier)
     end
   end
 end

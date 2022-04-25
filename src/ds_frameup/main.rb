@@ -1,7 +1,6 @@
-# DS::FrameUp.reload;DS::FrameUp::Panel.test
-
 module DS
 module FrameUp
+
   if Sketchup.version.to_i < REQUIRED_SU_VERSION
     msg = "#{EXTENSION.name} requires SketchUp 20#{REQUIRED_SU_VERSION} or later to run."
     UI.messagebox(msg)

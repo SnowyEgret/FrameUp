@@ -9,10 +9,9 @@ module FrameUp
     include Trimmable
     include Util
 
-    def initialize(parameters, position, modifier)
+    def initialize(parameters, position)
       @par = parameters
       @position = position
-      @modifier = modifier
       @lumber = Lumber.new(parameters)
     end
 
@@ -26,11 +25,11 @@ module FrameUp
       sel = model.selection
       sel.add(model.active_entities.first) if sel.empty?
       modifier = sel.first
-      # sheet = Drywall.new(Parameters.new.parameters, Geom::Point3d.new(0, 0, 0), modifier)
-      # sheet = Strapping.new(Parameters.new.parameters, Geom::Point3d.new(0, 0, 0), modifier)
-      # sheet = SheathingExterior.new(Parameters.new.parameters, Geom::Point3d.new(0, 0, 0), modifier)
-      sheet = SheathingInterior.new(Parameters.new.parameters, Geom::Point3d.new(0, 0, 0), modifier)
-      sheet.frame(modifier.parent, true)
+      # sheet = Drywall.new(Parameters.new.parameters, Geom::Point3d.new(0, 0, 0))
+      # sheet = Strapping.new(Parameters.new.parameters, Geom::Point3d.new(0, 0, 0))
+      # sheet = SheathingExterior.new(Parameters.new.parameters, Geom::Point3d.new(0, 0, 0))
+      sheet = SheathingInterior.new(Parameters.new.parameters, Geom::Point3d.new(0, 0, 0))
+      sheet.frame(modifier.parent, modifier.copy)
       model.commit_operation
     end
   end

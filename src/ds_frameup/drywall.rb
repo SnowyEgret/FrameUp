@@ -5,11 +5,11 @@ module FrameUp
   Sketchup.require(File.join(PLUGIN_DIR, 'sheet_base'))
 
   class Drywall < SheetBase
-    def initialize(parameters, position, modifier)
-      super(parameters, position, modifier)
+    def initialize(parameters, position)
+      super(parameters, position)
     end
 
-    def frame(group)
+    def frame(group, modifier)
       name = 'drywall'
       parent_group = group
       group = parent_group.entities.add_group
@@ -17,11 +17,11 @@ module FrameUp
       set_layer(group, name)
       set_color(group, name, COLOR_DRYWALL)
 
-      bounds = @modifier.definition.bounds
+      bounds = modifier.definition.bounds
       rows = (bounds.depth / @par[:drywall_width]).to_i + 1
       columns = (bounds.width / @par[:drywall_length]).to_i + 1
       sheets = @lumber.sheathing(group, @par[:drywall_type], @position, rows, columns)
-      intersect(sheets, @modifier)
+      intersect(sheets, modifier)
     end
   end
 end

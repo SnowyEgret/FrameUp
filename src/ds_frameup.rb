@@ -1,10 +1,16 @@
-#-------------------------------------------------------------------------------
+# Copyright 2022, Duncan M. Swain
+# All rights reserved
+
+# License:    MIT
+# Author:     Duncan Swain, duncan.m.swain@gmail.com
+# Repository: https://github.com/SnowyEgret/frameup
+# Version:    v0.9.0
+# Date:       4/24/2022
 #
-#    Author: Duncan Swain
-#    Copyright: Copyright (c) 2022
-#    License: MIT
-#
-#-------------------------------------------------------------------------------
+# This extension includes file solid_operations.rb from SketchUp extension SolidTools
+# copyrighted by Julia Christina Eneroth in 2018 and
+# published at https://github.com/Eneroth3/eneroth-solid-tools under MIT license
+
 require 'extensions.rb'
 
 module DS
@@ -16,10 +22,9 @@ module DS
     PLUGIN_DIR = File.join(File.dirname(path), PLUGIN_ID)
     REQUIRED_SU_VERSION = 14
     EXTENSION = SketchupExtension.new('FrameUp', File.join(PLUGIN_DIR, 'main'))
-
     EXTENSION.creator     = 'Duncan Swain (SnowyEgret)'
-    EXTENSION.description = 'Frames a panel'
-    EXTENSION.version     = '1.0'
+    EXTENSION.description = 'Frames a doublre stud wall prefab panel'
+    EXTENSION.version     = '0.9.0'
     EXTENSION.copyright   = "2022, #{EXTENSION.creator}"
     Sketchup.register_extension(EXTENSION, true)
   end
