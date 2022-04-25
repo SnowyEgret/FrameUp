@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DS
   module FrameUp
     class StudWall
@@ -7,26 +9,6 @@ module DS
         @length = length
         @height = height
         @lumber = Lumber.new(parameters)
-      end
-
-      def self.test
-        model = Sketchup.active_model
-        model.start_operation('Test', true)
-
-        # TEST: position of second to last stud
-        # 12.times do |i|
-        #   position = Geom::Point3d.new(0, i * 6, 0)
-        #   wall = StudWall.new(position, 80 + i, 120)
-        #   wall.frame(model)
-        # end
-
-        # TEST: flag to create subgroup
-        position = Geom::Point3d.new(0, 0, 0)
-        wall = StudWall.new(Parameters.new.parameters, position, 80, 120)
-        # wall.frame(model)
-        wall.frame(model, CREATE_SUBGROUP)
-
-        model.commit_operation
       end
 
       def frame(group)
@@ -40,8 +22,6 @@ module DS
         @lumber.bottom_plate(group, plate_b_position, @length)
         @lumber.top_plate(group, plate_t_position, @length)
       end
-
-      private
 
       def num_studs
         last_stud_spacing_factor = 1.7
@@ -73,6 +53,26 @@ module DS
         p = plate_b_position
         p.z += @height - @par[:stud_thickness]
         p
+      end
+
+      def self.test
+        model = Sketchup.active_model
+        model.start_operation('Test', true)
+
+        # TEST: position of second to last stud
+        # 12.times do |i|
+        #   position = Geom::Point3d.new(0, i * 6, 0)
+        #   wall = StudWall.new(position, 80 + i, 120)
+        #   wall.frame(model)
+        # end
+
+        # TEST: flag to create subgroup
+        position = Geom::Point3d.new(0, 0, 0)
+        wall = StudWall.new(Parameters.new.parameters, position, 80, 120)
+        # wall.frame(model)
+        wall.frame(model, CREATE_SUBGROUP)
+
+        model.commit_operation
       end
     end
   end

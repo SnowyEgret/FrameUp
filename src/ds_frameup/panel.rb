@@ -31,14 +31,9 @@ module DS
         @walls = init_walls
         @openings = init_openings
         @perimeter = Perimeter.new(@par, self)
-        # TODO: Pass modifiers to #frame methods instead
-        # @strapping = Strapping.new(@par, position_strapping, @group.copy)
         @strapping = Strapping.new(@par, position_strapping)
-        # @drywall = Drywall.new(@par, position_drywall, @group.copy)
         @drywall = Drywall.new(@par, position_drywall)
-        # @sheathing_interior = SheathingInterior.new(@par, position_sheathing_int, shrink(@group))
         @sheathing_interior = SheathingInterior.new(@par, position_sheathing_int)
-        # @sheathing_exterior = SheathingExterior.new(@par, position_sheathing_ext, @group.copy)
         @sheathing_exterior = SheathingExterior.new(@par, position_sheathing_ext)
         @insulation = Insulation.new(@par)
       end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DS
 module FrameUp
 
@@ -59,7 +61,6 @@ module FrameUp
     # A modifier cannot be completely enclosed by the target
     # Reduce the size of the target so that modifiers are not enclosed
     def shrink(group, target)
-      # copy = target.copy
       copy = group.entities.add_instance(target.definition, IDENTITY)
       copy.make_unique
       faces = copy.entities.grep(Sketchup::Face)

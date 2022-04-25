@@ -1,10 +1,12 @@
-require_relative 'constants.rb'
+# frozen_string_literal: true
+
 module DS
 module FrameUp
 
   Sketchup.require(File.join(PLUGIN_DIR, 'lumber'))
   Sketchup.require(File.join(PLUGIN_DIR, 'trimmable'))
   Sketchup.require(File.join(PLUGIN_DIR, 'util'))
+  Sketchup.require(File.join(PLUGIN_DIR, 'constants'))
 
   class Perimeter
     include Trimmable

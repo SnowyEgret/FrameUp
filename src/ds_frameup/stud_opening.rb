@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DS
   module FrameUp
     class StudOpening
@@ -8,24 +10,6 @@ module DS
         @bounds_wall = bounds_wall
         @bounds_opening = bounds_opening
         @lumber = Lumber.new(parameters)
-      end
-
-      def self.test
-        model = Sketchup.active_model
-        model.start_operation('Test', true)
-
-        # Set x to same as opening bounds x
-        min = Geom::Point3d.new(0, 0, 0)
-        max = Geom::Point3d.new(0, 16, 120)
-        bounds_wall = Geom::BoundingBox.new.add(min, max)
-
-        min = Geom::Point3d.new(0, 0, 30)
-        max = Geom::Point3d.new(34, 16, 84)
-        bounds_opening = Geom::BoundingBox.new.add(min, max)
-
-        opening = StudOpening.new(Parameters.new.parameters, bounds_wall, bounds_opening)
-        opening.frame(model, CREATE_SUBGROUP)
-        model.commit_operation
       end
 
       def frame(group)
@@ -180,5 +164,23 @@ module DS
         plate_t_position.z - cripple_t_position.z - @par[:stud_thickness]
       end
     end
-  end
+
+    def self.test
+      model = Sketchup.active_model
+      model.start_operation('Test', true)
+
+      # Set x to same as opening bounds x
+      min = Geom::Point3d.new(0, 0, 0)
+      max = Geom::Point3d.new(0, 16, 120)
+      bounds_wall = Geom::BoundingBox.new.add(min, max)
+
+      min = Geom::Point3d.new(0, 0, 30)
+      max = Geom::Point3d.new(34, 16, 84)
+      bounds_opening = Geom::BoundingBox.new.add(min, max)
+
+      opening = StudOpening.new(Parameters.new.parameters, bounds_wall, bounds_opening)
+      opening.frame(model, CREATE_SUBGROUP)
+      model.commit_operation
+    end
+end
 end
