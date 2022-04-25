@@ -22,8 +22,6 @@ module DS
       def initialize(parameters, group)
         @par = parameters
         @group = group
-        # TODO: Why is the original group name lost?
-        @group.name = 'Panel'
         @faces = init_faces
         @faces_hash = init_faces_hash
         @dimensions = init_dimensions
@@ -83,7 +81,7 @@ module DS
         frame_sheathing_exterior(top)
         frame_strapping(top)
         frame_perimeter(top)
-        @insulation.fill(top, @group)
+        # @insulation.fill(top, @group)
         @group.visible = false
         Sketchup.active_model.selection.clear
       end

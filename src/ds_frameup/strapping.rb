@@ -20,8 +20,12 @@ module FrameUp
       set_color(group, name, COLOR_STRAPPING)
 
       bounds = modifier.definition.bounds
-      rows = (bounds.depth / @par[:strap_spacing]).to_i + 1
-      straps = @lumber.straps(group, @position, rows, bounds.width)
+      rows = (bounds.depth / @par[:strap_spacing]).to_i
+      length = bounds.width
+      straps = []
+      straps << @lumber.strap(group, @position, length)
+      @position.z += @par[:strap_spacing] - @par[:strap_width] / 2
+      straps = @lumber.straps(group, @position, rows, length)
       intersect(straps, modifier)
     end
   end
