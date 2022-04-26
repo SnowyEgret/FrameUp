@@ -23,7 +23,8 @@ module FrameUp
 
       UI.add_context_menu_handler do |context_menu|
         context_menu_frameup = context_menu.add_submenu('FrameUp')
-        cmd = UI::Command.new('Frame Panel') { frame_panel }
+        # cmd = UI::Command.new('Frame Panel') { frame_panel }
+        cmd = UI::Command.new('Frame Panel') { show_parameters_dialog }
         cmd.menu_text = 'Frame Panel'
         # cmd.small_icon = 'icons/foo.png'
         # cmd.status_bar_text = 'foo'
@@ -98,6 +99,7 @@ module FrameUp
 
       @parameters.update
       save_defaults
+      frame_panel
     end
 
     def self.save_defaults

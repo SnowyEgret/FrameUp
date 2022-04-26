@@ -28,20 +28,14 @@ module DS
         @group.name = 'Panel'
         @faces = init_faces
         @faces_hash = init_faces_hash
-        # @dimensions = init_dimensions
         init_dimensions
         check_axes
         @walls = init_walls
         @openings = init_openings
         @perimeter = Perimeter.new(@par, self)
-        # TODO: Pass modifiers to #frame methods instead
-        # @strapping = Strapping.new(@par, position_strapping, @group.copy)
         @strapping = Strapping.new(@par, position_strapping)
-        # @drywall = Drywall.new(@par, position_drywall, @group.copy)
         @drywall = Drywall.new(@par, position_drywall)
-        # @sheathing_interior = SheathingInterior.new(@par, position_sheathing_int, shrink(@group))
         @sheathing_interior = SheathingInterior.new(@par, position_sheathing_int)
-        # @sheathing_exterior = SheathingExterior.new(@par, position_sheathing_ext, @group.copy)
         @sheathing_exterior = SheathingExterior.new(@par, position_sheathing_ext)
         @insulation = Insulation.new(@par)
       end
@@ -98,7 +92,7 @@ module DS
 
       def frame_openings(group)
         @openings.each do |opening|
-          # No copy here?
+          # No copy here
           opening.frame(group, @group)
         end
       end
@@ -319,7 +313,6 @@ module DS
 
       def init_walls
         walls = []
-        # @dimensions.first.each_with_index do |x, i|
         @x.each_with_index do |x, i|
           x_next = @x[i + 1]
           x_next_next = @x[i + 2]
