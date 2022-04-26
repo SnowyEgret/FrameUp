@@ -17,6 +17,7 @@ module FrameUp
       :strap_spacings,
       :sheathing_types,
       :drywall_types,
+      :insulation_types,
       :thicknesses
     )
 
@@ -76,6 +77,12 @@ module FrameUp
           dry_5_8: 0.625
         }
 
+      @insulation_types =
+        {
+          insulation_cellulose: 'Celullose',
+          insulation_none: 'None'
+        }
+
       # Each entry will appear in the dialog_parameters dialog for setting
       @dialog_parameters =
         {
@@ -86,7 +93,8 @@ module FrameUp
           strap_spacing: Parameter.new('Strap Spacing:', @strap_spacings),
           sheet_int_type: Parameter.new('Interior Sheathing:', @sheathing_types),
           sheet_ext_type: Parameter.new('Exterior Sheathing:', @sheathing_types),
-          drywall_type: Parameter.new('Drywall:', @drywall_types)
+          drywall_type: Parameter.new('Drywall:', @drywall_types),
+          insulation_type: Parameter.new('Insulation', @insulation_types)
         }
 
       # Dimensions which are not set in the dialog

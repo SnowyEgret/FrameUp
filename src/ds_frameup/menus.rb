@@ -90,6 +90,12 @@ module FrameUp
       par.default = input
       constants[:drywall_thickness] = @parameters.thicknesses[type]
 
+      input = inputs[8]
+      par = dialog_pars[:insulation_type]
+      type = @parameters.insulation_types.key(input)
+      par.value = type
+      par.default = input
+
       @parameters.update
       save_defaults
     end
@@ -102,6 +108,10 @@ module FrameUp
     def self.read_defaults
       Sketchup.active_model.get_attribute('defaults', :defaults)
     end
+
+    # def self.remove_defaults
+    #   Sketchup.active_model.set_attribute('defaults', nil, nil)
+    # end
 
     def self.frame_panel
       model = Sketchup.active_model
@@ -123,6 +133,12 @@ module FrameUp
       #   return false
       # end
       return true unless selection.length > 1
+    end
+
+    def self.test
+      p read_defaults
+      # remove_defaults
+      # p read_defaults
     end
   end
 end

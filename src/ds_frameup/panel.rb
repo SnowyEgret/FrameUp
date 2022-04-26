@@ -91,7 +91,7 @@ module DS
         frame_sheathing_exterior(top)
         frame_strapping(top)
         frame_perimeter(top)
-        # @insulation.fill(top, @group)
+        @insulation.fill(top, @group) unless @par[:insulation_type] == :insulation_none
         @group.visible = false
         Sketchup.active_model.selection.clear
       end
