@@ -72,7 +72,7 @@ module FrameUp
 
     def modifier_intersect_horizontal
       copy = @panel.group.copy
-      copy.name = 'shrink_back_and_end_modifier'
+      copy.name = 'modifier_intersect_horizontal'
       faces = copy.entities.grep(Sketchup::Face)
       faces.each do |face|
         case normal(face)
@@ -87,7 +87,7 @@ module FrameUp
 
     def modifier_subtract_horizontal
       copy = @panel.group.copy
-      copy.name = 'shrink_edges_modifier'
+      copy.name = 'modifier_subtract_horizontal'
       faces = copy.entities.grep(Sketchup::Face)
       faces.each do |face|
         case normal(face)
@@ -119,7 +119,7 @@ module FrameUp
       # TODO: Array of bucks
       p = bounds.min
       p.x += @par[:buck_thickness]
-      p.x -= 2 * @par[:buck_thickness] if right_corner_sill?(bounds.min)
+      p.x -= 2 * @par[:buck_thickness] if corner_sill_right?(bounds.min)
       p.y += @par[:sheet_ext_thickness] + @par[:strap_thickness]
       length = bounds.width - 2 * @par[:buck_thickness]
       length += 2 * @par[:buck_thickness] if corner_sill?(bounds.min)
@@ -155,7 +155,7 @@ module FrameUp
       position.z != @panel.height_front
     end
 
-    def right_corner_sill?(position)
+    def corner_sill_right?(position)
       corner_sill?(position) && position.x != 0
     end
 

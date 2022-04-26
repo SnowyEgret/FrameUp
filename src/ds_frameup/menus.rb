@@ -93,6 +93,7 @@ module FrameUp
 
     def save_defaults
       Sketchup.active_model.set_attribute('defaults', :defaults, @parameters.defaults)
+      # p read_defaults
     end
 
     def read_defaults
@@ -111,12 +112,12 @@ module FrameUp
     end
 
     def selection_valid?(selection)
-      begin
-        Panel.new(@parameters.parameters, selection.first)
-      rescue
-        warn $ERROR_INFO
-        return false
-      end
+      # begin
+      #   Panel.new(@parameters.parameters, selection.first)
+      # rescue
+      #   warn $ERROR_INFO
+      #   return false
+      # end
       return true unless selection.length > 1
     end
   end

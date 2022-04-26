@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# DS::FrameUp.reload;DS::FrameUp::Panel.test
+
 module DS
   module FrameUp
 
@@ -22,16 +24,24 @@ module DS
       def initialize(parameters, group)
         @par = parameters
         @group = group
+        # TODO: Why is the original group name lost?
+        @group.name = 'Panel'
         @faces = init_faces
         @faces_hash = init_faces_hash
-        @dimensions = init_dimensions
+        # @dimensions = init_dimensions
+        init_dimensions
         check_axes
         @walls = init_walls
         @openings = init_openings
         @perimeter = Perimeter.new(@par, self)
+        # TODO: Pass modifiers to #frame methods instead
+        # @strapping = Strapping.new(@par, position_strapping, @group.copy)
         @strapping = Strapping.new(@par, position_strapping)
+        # @drywall = Drywall.new(@par, position_drywall, @group.copy)
         @drywall = Drywall.new(@par, position_drywall)
+        # @sheathing_interior = SheathingInterior.new(@par, position_sheathing_int, shrink(@group))
         @sheathing_interior = SheathingInterior.new(@par, position_sheathing_int)
+        # @sheathing_exterior = SheathingExterior.new(@par, position_sheathing_ext, @group.copy)
         @sheathing_exterior = SheathingExterior.new(@par, position_sheathing_ext)
         @insulation = Insulation.new(@par)
       end
@@ -88,7 +98,7 @@ module DS
 
       def frame_openings(group)
         @openings.each do |opening|
-          # No @group.copy here
+          # No copy here?
           opening.frame(group, @group)
         end
       end
@@ -300,17 +310,17 @@ module DS
 
           bounds_wall = Geom::BoundingBox.new.add(min, max)
 
+          openings << Opening.new(@par, bounds_wall, bounds_opening, self)
           # TODO: Simplify contstructor
           # @openings << Opening.new(bounds_opening, height_wall, height_ledge)
-          openings << Opening.new(@par, bounds_wall, bounds_opening, self)
-          # openings << Opening.new(@par, bounds_wall, bounds_opening)
         end
         openings
       end
 
       def init_walls
         walls = []
-        @dimensions.first.each_with_index do |x, i|
+        # @dimensions.first.each_with_index do |x, i|
+        @x.each_with_index do |x, i|
           x_next = @x[i + 1]
           x_next_next = @x[i + 2]
           # p "x=#{x} x_next=#{x_next}"
@@ -321,22 +331,35 @@ module DS
           len = x_next.abs - pos.x
           ht = height_front - 2 * @par[:buck_thickness] - 2 * @par[:stud_thickness]
           th = thickness
+          # p "------------------#{i}"
+          puts
+          p i
+          p x
+          p x_next
+          p x_next_next
+          p wall_type(x, x_next, x_next_next, i)
           case wall_type(x, x_next, x_next_next, i)
-          when OPENING
+          when WALL_OPENING
             next
-          when WALL_CORNER_FIRST
+          when WALL_CORNER_WINDOW_FIRST
             len += @par[:buck_thickness]
             ht = sill_height(x, x_next) - 2 * @par[:stud_thickness] - 2 * @par[:buck_thickness]
-          when WALL_CORNER_LAST
+          when WALL_CORNER_WINDOW_LAST
             pos.x -= 2 * @par[:buck_thickness]
             len += @par[:buck_thickness]
             ht = sill_height(x, x_next) - 2 * @par[:stud_thickness] - 2 * @par[:buck_thickness]
-          when WALL_AFTER_CORNER
+          when WALL_AFTER_CORNER_WINDOW
             len -= 2 * @par[:stud_thickness] + @par[:buck_thickness]
-          when WALL_BEFORE_CORNER
+          when WALL_BEFORE_CORNER_WINDOW
             pos.x += 2 * @par[:stud_thickness]
             len -= 2 * @par[:stud_thickness] + @par[:buck_thickness]
-          when WALL_TYPICAL
+          when WALL_FIRST
+            # pos.x += 2 * @par[:stud_thickness]
+            len -= 2 * @par[:stud_thickness] + @par[:buck_thickness]
+          when WALL_LAST
+            pos.x += 2 * @par[:stud_thickness]
+            len -= 2 * @par[:stud_thickness] + @par[:buck_thickness]
+          when WALL
             pos.x += 2 * @par[:stud_thickness]
             len -= 4 * @par[:stud_thickness] + @par[:buck_thickness]
           end
@@ -350,13 +373,17 @@ module DS
         Perimeter.new(@par, self)
       end
 
+      # Value of x is positive if plane is facing left
       def wall_type(x, x_next, x_next_next, i)
-        return OPENING if x.negative? && x_next.positive?
-        return WALL_CORNER_LAST if i.positive? && (x.positive? || x.zero?) && x_next.positive? || x.negative? && x_next.negative?
-        return WALL_CORNER_FIRST if (x.positive? || x.zero?) && x_next.positive? || x.negative? && x_next.negative?
-        return WALL_AFTER_CORNER if x.positive? && i == 1
-        return WALL_BEFORE_CORNER if x.positive? && !x_next_next.nil? && x_next_next&.negative?
-        return WALL_TYPICAL if (x.positive? || x.zero?) && x_next.negative?
+
+        return WALL_OPENING if i.positive? && x.negative? && x_next.positive?
+        return WALL_CORNER_WINDOW_FIRST if i.zero? && x_next.positive?
+        return WALL_CORNER_WINDOW_LAST if i.positive? && x.negative? && x_next.negative?
+        return WALL_AFTER_CORNER_WINDOW if i == 1 && x.positive?
+        return WALL_BEFORE_CORNER_WINDOW if x.positive? && !x_next_next.nil? && x_next_next&.negative?
+        return WALL_FIRST if i.zero? && x_next.negative?
+        return WALL_LAST if x.positive? && x_next.negative? && x_next_next.nil?
+        return WALL if x.positive? && x_next.negative?
 
         raise 'No wall type found'
       end
