@@ -8,7 +8,6 @@ module FrameUp
   end
 
   Sketchup.require(File.join(PLUGIN_DIR, 'menus'))
-  Menus.new
 
   # See https://github.com/SketchUp/sketchup-ruby-api-tutorials/wiki/Development-Setup
   # Reload extension by running this method from the Ruby Console

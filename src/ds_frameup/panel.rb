@@ -331,13 +331,12 @@ module DS
           len = x_next.abs - pos.x
           ht = height_front - 2 * @par[:buck_thickness] - 2 * @par[:stud_thickness]
           th = thickness
-          # p "------------------#{i}"
-          puts
-          p i
-          p x
-          p x_next
-          p x_next_next
-          p wall_type(x, x_next, x_next_next, i)
+          # puts
+          # p i
+          # p x
+          # p x_next
+          # p x_next_next
+          # p wall_type(x, x_next, x_next_next, i)
           case wall_type(x, x_next, x_next_next, i)
           when WALL_OPENING
             next
@@ -388,9 +387,9 @@ module DS
         raise 'No wall type found'
       end
 
-      def corner_window?(x, x_next)
-        (x.positive? || x.zero?) && x_next.positive? || x.negative? && x_next.negative?
-      end
+      # def corner_window?(x, x_next)
+      #   (x.positive? || x.zero?) && x_next.positive? || x.negative? && x_next.negative?
+      # end
 
       def sill_height(x, x_next)
         range = (x.abs..x_next.abs)
@@ -423,23 +422,6 @@ module DS
         end
         copy
       end
-
-      # def shrink(modifier)
-      #   copy = modifier.copy
-      #   copy.name = 'panel_shrunk_modifier'
-      #   faces = copy.entities.grep(Sketchup::Face)
-      #   faces.each do |face|
-      #     case normal(face)
-      #     when [0, 1, 0]
-      #       face.pushpull(-@par[:drywall_thickness]) if face.plane.last.abs == thickness
-      #     when [0, -1, 0]
-      #       face.pushpull(-@par[:sheet_ext_thickness] - @par[:strap_thickness])
-      #     when [1, 0, 0], [-1, 0, 0], [0, 0, 1], [0, 0, -1]
-      #       face.pushpull(-@par[:buck_thickness])
-      #     end
-      #   end
-      #   copy
-      # end
 
       def self.test
         model = Sketchup.active_model

@@ -7,11 +7,15 @@ module FrameUp
   Sketchup.require(File.join(PLUGIN_DIR, 'parameters'))
   Sketchup.require(File.join(PLUGIN_DIR, 'panel'))
 
-  class Menus
-    def initialize
-      @parameters = Parameters.new
+  # Menus.new
 
-      return if file_loaded?(__FILE__)
+  # class Menus
+  #   def initialize
+  module Menus
+    @parameters = Parameters.new
+
+    # return if file_loaded?(__FILE__)
+    unless file_loaded?(__FILE__)
 
       menu_extensions = UI.menu('Extensions')
       menu_frameup = menu_extensions.add_submenu('FrameUp')
@@ -27,12 +31,11 @@ module FrameUp
           selection_valid?(Sketchup.active_model.selection) ? MF_ENABLED : MF_GRAYED
         end
         context_menu_frameup.add_item cmd
-        # context_menu_frameup.add_item('Frame Panel') { frame_panel }
       end
       file_loaded(__FILE__)
     end
 
-    def show_parameters_dialog
+    def self.show_parameters_dialog
       dialog_pars = @parameters.dialog_parameters
       constants = @parameters.constants
 
@@ -91,16 +94,16 @@ module FrameUp
       save_defaults
     end
 
-    def save_defaults
+    def self.save_defaults
       Sketchup.active_model.set_attribute('defaults', :defaults, @parameters.defaults)
       # p read_defaults
     end
 
-    def read_defaults
+    def self.read_defaults
       Sketchup.active_model.get_attribute('defaults', :defaults)
     end
 
-    def frame_panel
+    def self.frame_panel
       model = Sketchup.active_model
       model.start_operation('Frame', true)
       sel = model.selection
@@ -111,7 +114,8 @@ module FrameUp
       model.commit_operation
     end
 
-    def selection_valid?(selection)
+    def self.selection_valid?(selection)
+      # Temporarily commented out because SketchUp tray and console periodically refreshing
       # begin
       #   Panel.new(@parameters.parameters, selection.first)
       # rescue
