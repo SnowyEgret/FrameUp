@@ -70,14 +70,14 @@ module FrameUp
       type = @parameters.sheathing_types.key(input)
       par.value = type
       par.default = input
-      constants[:sheet_thickness] = @parameters.thicknesses[type]
+      constants[:sheet_int_thickness] = @parameters.thicknesses[type]
 
       input = inputs[6]
       par = dialog_pars[:sheet_ext_type]
       type = @parameters.sheathing_types.key(input)
       par.value = type
       par.default = input
-      constants[:sheet_thickness] = @parameters.thicknesses[type]
+      constants[:sheet_ext_thickness] = @parameters.thicknesses[type]
 
       input = inputs[7]
       par = dialog_pars[:drywall_type]

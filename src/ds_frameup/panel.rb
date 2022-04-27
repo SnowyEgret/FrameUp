@@ -65,7 +65,7 @@ module DS
 
       def position_sheathing_int
         p = position.clone
-        p.y += thickness - @par[:stud_depth] - @par[:sheet_int_thickness] - @par[:drywall_thickness]
+        p.y += thickness - @par[:drywall_thickness] - @par[:stud_depth] - @par[:sheet_int_thickness]
         p
       end
 
