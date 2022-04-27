@@ -83,6 +83,12 @@ module FrameUp
           insulation_none: 'None'
         }
 
+      # @notch_posiitons =
+      #   {
+      #     notch_top: 'Top',
+      #     notch_bottom: 'Bottom'
+      #   }
+
       # Each entry will appear in the dialog_parameters dialog for setting
       @dialog_parameters =
         {
@@ -94,7 +100,9 @@ module FrameUp
           sheet_int_type: Parameter.new('Interior Sheathing:', @sheathing_types),
           sheet_ext_type: Parameter.new('Exterior Sheathing:', @sheathing_types),
           drywall_type: Parameter.new('Drywall:', @drywall_types),
-          insulation_type: Parameter.new('Insulation', @insulation_types)
+          insulation_type: Parameter.new('Insulation', @insulation_types),
+          # notch_position: Parameter.new('Notch Position', @notch_positions),
+          # notch_height: Parameter.new('Notch height')
         }
 
       # Dimensions which are not set in the dialog

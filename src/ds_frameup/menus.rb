@@ -7,14 +7,9 @@ module FrameUp
   Sketchup.require(File.join(PLUGIN_DIR, 'parameters'))
   Sketchup.require(File.join(PLUGIN_DIR, 'panel'))
 
-  # Menus.new
-
-  # class Menus
-  #   def initialize
   module Menus
     @parameters = Parameters.new
 
-    # return if file_loaded?(__FILE__)
     unless file_loaded?(__FILE__)
 
       menu_extensions = UI.menu('Extensions')

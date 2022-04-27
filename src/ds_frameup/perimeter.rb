@@ -64,7 +64,7 @@ module FrameUp
       faces.each do |face|
         case normal(face)
         when [0, 1, 0]
-          face.pushpull(-@par[:drywall_thickness]) if face.plane.last.abs == @panel.thickness
+          pushpull_back_face(face)
         end
       end
       copy
@@ -77,12 +77,22 @@ module FrameUp
       faces.each do |face|
         case normal(face)
         when [0, 1, 0]
-          face.pushpull(-@par[:drywall_thickness]) if face.plane.last.abs == @panel.thickness
+          pushpull_back_face(face)
         when [1, 0, 0]
           face.pushpull(-@par[:buck_thickness])
         end
       end
       copy
+    end
+
+    def pushpull_back_face(face)
+      if face.plane.last.abs == @panel.thickness
+        face.pushpull(-@par[:drywall_thickness])
+      else
+        target = @panel.thickness - @par[:drywall_thickness] - @par[:stud_depth]
+        delta = target - face.plane.last.abs
+        face.pushpull(delta)
+      end
     end
 
     def modifier_subtract_horizontal
