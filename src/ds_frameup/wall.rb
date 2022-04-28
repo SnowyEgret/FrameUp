@@ -10,12 +10,26 @@ module FrameUp
   class Wall
     include Util
 
-    def initialize(parameters, position, length, height, thickness, height_ledge)
+    # Issue #14 partly implemented
+    # def initialize(parameters, position, length, height, thickness, height_ledge)
+    def initialize(
+      parameters,
+      position,
+      length,
+      height,
+      thickness,
+      height_ledge,
+      position_z_ledge,
+      corner_window_wall
+    )
       @par = parameters
       @position = position
       @height = height
       @thickness = thickness
       @height_ledge = height_ledge
+      @position_z_ledge = position_z_ledge
+      @corner_window_wall = corner_window_wall
+
       @stud_wall_front = StudWall.new(parameters, wall_f_position, length, wall_f_height)
       @stud_wall_back = StudWall.new(parameters, wall_b_position, length, wall_b_height)
     end
@@ -38,7 +52,9 @@ module FrameUp
     def wall_b_position
       p = wall_f_position
       p.y += @thickness - @par[:stud_depth] - @par[:strap_thickness] - @par[:sheet_ext_thickness] - @par[:drywall_thickness]
-      p.z += @height_ledge - @par[:buck_thickness]
+      # Issue #14 partly implemented
+      # p.z += @height_ledge - @par[:buck_thickness]
+      p.z += @position_z_ledge - @par[:buck_thickness] unless @position_z_ledge.zero?
       p
     end
 
@@ -47,7 +63,13 @@ module FrameUp
     end
 
     def wall_b_height
-      wall_f_height - @height_ledge + @par[:buck_thickness]
+      # Issue #14 partly implemented
+      # wall_f_height + @par[:buck_thickness] - @height_ledge
+      if @position_z_ledge.zero? && @corner_window_wall
+        wall_f_height
+      else
+        wall_f_height + @par[:buck_thickness] - @height_ledge
+      end
     end
 
     def self.test

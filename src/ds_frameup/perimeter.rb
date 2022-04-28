@@ -123,6 +123,7 @@ module FrameUp
       @lumber.bucks_vertical(group, p, num_bucks)
     end
 
+    # TODO: Extract position calculations to methods like elsewhere
     def frame_top(group_bucks, group_plates, bounds)
       # Top faces are either at top of panel or at top of low walls at corner windows
       # Length and x position must be adjusted for corner window conditions
@@ -142,6 +143,7 @@ module FrameUp
       bucks
     end
 
+    # TODO: Extract position calculations to methods like elsewhere
     def frame_bottom(group_bucks, group_plates, bounds)
       p = bounds.min
       p.x += @par[:buck_thickness]
@@ -155,7 +157,8 @@ module FrameUp
       p.y += @panel.thickness - 2 * @par[:stud_depth] - @par[:drywall_thickness] - @par[:strap_thickness] - 2 * @par[:sheet_ext_thickness]
       @lumber.bottom_plate(group_plates, p, length)
       # Bottom plate on ledge
-      p.y += @par[:stud_depth] + @par[:sheet_int_thickness]
+      # p.y += @par[:stud_depth] + @par[:sheet_int_thickness]
+      p.y += @par[:stud_depth] + @par[:drywall_thickness]
       p.z += @panel.height_ledge - @par[:buck_thickness]
       @lumber.bottom_plate(group_plates, p, length)
       bucks
