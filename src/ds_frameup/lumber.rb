@@ -104,9 +104,10 @@ module DS
         _stud(group, position, length, 'top plate', rotation)
       end
 
-      def bottom_plate(group, position, length)
+      def bottom_plate(group, position, length, stud_depth = nil)
         rotation = Geom::Transformation.rotation([0, 0, 0], [0, 1, 0], 90.degrees)
-        _stud(group, position, length, 'bottom plate', rotation)
+        # _stud(group, position, length, 'bottom plate', rotation)
+        _stud(group, position, length, 'bottom plate', rotation, stud_depth)
       end
 
       def sill_plate(group, position, length)
@@ -225,8 +226,6 @@ module DS
         instance
       end
 
-      private
-
       # Copied over from class Framer
       def array(group, instance, vector, num_copies)
         copies = []
@@ -240,11 +239,14 @@ module DS
         copies
       end
 
-      def _stud(group, position, length, name, rotation = IDENTITY)
+      # TODO: Add argument to override current stud depth
+      def _stud(group, position, length, name, rotation = IDENTITY, stud_depth = nil)
         tr = Geom::Transformation.new position
         tr *= rotation
         tr *= Geom::Transformation.scaling(1, 1, length / 12.0)
-        definition = @studs_hash[@par[:stud_depth]]
+        depth = stud_depth.nil? ? @par[:stud_depth] : stud_depth
+        # definition = @studs_hash[@par[:stud_depth]]
+        definition = @studs_hash[depth]
         instance = group.entities.add_instance(definition, tr)
         instance.name = name
         instance

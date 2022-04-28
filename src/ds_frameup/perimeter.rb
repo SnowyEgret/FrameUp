@@ -139,9 +139,14 @@ module FrameUp
       length = bounds.width - 2 * @par[:buck_thickness]
       num_bucks = (length / @par[:sheet_length]).to_i
       bucks = @lumber.bucks_horizontal(group_bucks, position_bucks_horizontal_bottom(bounds), num_bucks)
-      @lumber.bottom_plate(group_plates, position_bottom_plate_front(bounds), length)
-      @lumber.bottom_plate(group_plates, position_bottom_plate_back(bounds), length)
-      @lumber.bottom_plate(group_plates, position_bottom_plate_ledge(bounds), length)
+      # @lumber.bottom_plate(group_plates, position_bottom_plate_front(bounds), length)
+      # @lumber.bottom_plate(group_plates, position_bottom_plate_back(bounds), length)
+      # TODO: Check bottom_b_with to see if two current stud widths will fit
+      # 2X6 likely too deep if ledge is at bottom
+      overide_stud_depth = 3.5
+      @lumber.bottom_plate(group_plates, position_bottom_plate_front(bounds), length, overide_stud_depth)
+      @lumber.bottom_plate(group_plates, position_bottom_plate_back(bounds), length, overide_stud_depth)
+      @lumber.bottom_plate(group_plates, position_plate_ledge(bounds), length)
       bucks
     end
 
@@ -153,6 +158,7 @@ module FrameUp
       corner_sill?(position) && position.x != 0
     end
 
+    # Top bucks and plate positions
     def position_bucks_horizontal_top(bounds)
       p = bounds.min
       p.x += @par[:buck_thickness]
@@ -173,7 +179,7 @@ module FrameUp
       p
     end
 
-    # Bottom bucks and plates
+    # Bottom bucks and plate positions
     def position_bucks_horizontal_bottom(bounds)
       p = bounds.min
       p.x += @par[:buck_thickness]
@@ -190,18 +196,22 @@ module FrameUp
 
     def position_bottom_plate_back(bounds)
       p = position_bottom_plate_front(bounds)
-      p.y = @panel.thickness - @par[:drywall_thickness] - 2 * @par[:stud_depth] - @par[:sheet_int_thickness]
+      # p.y = @panel.thickness - @par[:drywall_thickness] - 2 * @par[:stud_depth] - @par[:sheet_int_thickness]
+      # When ledge is at bottom studs must be 2x4 else they will overlap
+      # TODO: check buck_b_width
+      p.y = @panel.thickness - @par[:drywall_thickness] - @par[:stud_depth] - 3.5 - @par[:sheet_int_thickness]
       p
     end
 
-    def position_bottom_plate_ledge(bounds)
+  # Ledge plate either top or bottom
+    def position_plate_ledge(bounds)
       p = position_bottom_plate_back(bounds)
-      # p.y += @par[:stud_depth] + @par[:drywall_thickness]
       p.y = @panel.thickness - @par[:drywall_thickness] - @par[:stud_depth]
       p.z += @panel.height_ledge - @par[:buck_thickness]
       p
     end
 
+    # Buck widths
     def buck_width
       @panel.thickness - @par[:sheet_ext_thickness] - @par[:strap_thickness] - @par[:drywall_thickness]
     end
