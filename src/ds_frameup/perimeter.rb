@@ -123,44 +123,26 @@ module FrameUp
       @lumber.bucks_vertical(group, p, num_bucks)
     end
 
-    # TODO: Extract position calculations to methods like elsewhere
     def frame_top(group_bucks, group_plates, bounds)
       # Top faces are either at top of panel or at top of low walls at corner windows
       # Length and x position must be adjusted for corner window conditions
-      # TODO: Array of bucks
-      p = bounds.min
-      p.x += @par[:buck_thickness]
-      p.x -= 2 * @par[:buck_thickness] if corner_sill_right?(bounds.min)
-      p.y += @par[:sheet_ext_thickness] + @par[:strap_thickness]
       length = bounds.width - 2 * @par[:buck_thickness]
       length += 2 * @par[:buck_thickness] if corner_sill?(bounds.min)
       num_bucks = (length / @par[:sheet_length]).to_i
-      bucks = @lumber.bucks_horizontal(group_bucks, p, num_bucks)
-      p.z -= @par[:buck_thickness]
-      @lumber.top_plate(group_plates, p, length)
-      p.y += buck_width - @par[:stud_depth]
-      @lumber.top_plate(group_plates, p, length)
+      bucks = @lumber.bucks_horizontal(group_bucks, position_bucks_horizontal_top(bounds), num_bucks)
+      @lumber.top_plate(group_plates, position_top_plate_front(bounds), length)
+      @lumber.top_plate(group_plates, position_top_plate_back(bounds), length)
       bucks
     end
 
     # TODO: Extract position calculations to methods like elsewhere
     def frame_bottom(group_bucks, group_plates, bounds)
-      p = bounds.min
-      p.x += @par[:buck_thickness]
-      p.y += @par[:sheet_ext_thickness] + @par[:strap_thickness]
-      p.z += @par[:buck_thickness]
       length = bounds.width - 2 * @par[:buck_thickness]
       num_bucks = (length / @par[:sheet_length]).to_i
-      bucks = @lumber.bucks_horizontal(group_bucks, p, num_bucks)
-      p.z += @par[:stud_thickness]
-      @lumber.bottom_plate(group_plates, p, length)
-      p.y += @panel.thickness - 2 * @par[:stud_depth] - @par[:drywall_thickness] - @par[:strap_thickness] - 2 * @par[:sheet_ext_thickness]
-      @lumber.bottom_plate(group_plates, p, length)
-      # Bottom plate on ledge
-      # p.y += @par[:stud_depth] + @par[:sheet_int_thickness]
-      p.y += @par[:stud_depth] + @par[:drywall_thickness]
-      p.z += @panel.height_ledge - @par[:buck_thickness]
-      @lumber.bottom_plate(group_plates, p, length)
+      bucks = @lumber.bucks_horizontal(group_bucks, position_bucks_horizontal_bottom(bounds), num_bucks)
+      @lumber.bottom_plate(group_plates, position_bottom_plate_front(bounds), length)
+      @lumber.bottom_plate(group_plates, position_bottom_plate_back(bounds), length)
+      @lumber.bottom_plate(group_plates, position_bottom_plate_ledge(bounds), length)
       bucks
     end
 
@@ -170,6 +152,53 @@ module FrameUp
 
     def corner_sill_right?(position)
       corner_sill?(position) && position.x != 0
+    end
+
+    def position_bucks_horizontal_top(bounds)
+      p = bounds.min
+      p.x += @par[:buck_thickness]
+      p.x -= 2 * @par[:buck_thickness] if corner_sill_right?(bounds.min)
+      p.y += @par[:sheet_ext_thickness] + @par[:strap_thickness]
+      p
+    end
+
+    def position_top_plate_front(bounds)
+      p = position_bucks_horizontal_top(bounds)
+      p.z -= @par[:buck_thickness]
+      p
+    end
+
+    def position_top_plate_back(bounds)
+      p = position_top_plate_front(bounds)
+      p.y += buck_width - @par[:stud_depth]
+      p
+    end
+
+    def position_bucks_horizontal_bottom(bounds)
+      p = bounds.min
+      p.x += @par[:buck_thickness]
+      p.y += @par[:sheet_ext_thickness] + @par[:strap_thickness]
+      p.z += @par[:buck_thickness]
+      p
+    end
+
+    def position_bottom_plate_front(bounds)
+      p = position_bucks_horizontal_bottom(bounds)
+      p.z += @par[:stud_thickness]
+      p
+    end
+
+    def position_bottom_plate_back(bounds)
+      p = position_bottom_plate_front(bounds)
+      p.y += @panel.thickness - 2 * @par[:stud_depth] - @par[:drywall_thickness] - @par[:strap_thickness] - 2 * @par[:sheet_ext_thickness]
+      p
+    end
+
+    def position_bottom_plate_ledge(bounds)
+      p = position_bottom_plate_back(bounds)
+      p.y += @par[:stud_depth] + @par[:drywall_thickness]
+      p.z += @panel.height_ledge - @par[:buck_thickness]
+      p
     end
 
     def buck_width
