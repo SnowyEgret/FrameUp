@@ -135,7 +135,6 @@ module FrameUp
       bucks
     end
 
-    # TODO: Extract position calculations to methods like elsewhere
     def frame_bottom(group_bucks, group_plates, bounds)
       length = bounds.width - 2 * @par[:buck_thickness]
       num_bucks = (length / @par[:sheet_length]).to_i
@@ -174,6 +173,7 @@ module FrameUp
       p
     end
 
+    # Bottom bucks and plates
     def position_bucks_horizontal_bottom(bounds)
       p = bounds.min
       p.x += @par[:buck_thickness]
@@ -190,13 +190,14 @@ module FrameUp
 
     def position_bottom_plate_back(bounds)
       p = position_bottom_plate_front(bounds)
-      p.y += @panel.thickness - 2 * @par[:stud_depth] - @par[:drywall_thickness] - @par[:strap_thickness] - 2 * @par[:sheet_ext_thickness]
+      p.y = @panel.thickness - @par[:drywall_thickness] - 2 * @par[:stud_depth] - @par[:sheet_int_thickness]
       p
     end
 
     def position_bottom_plate_ledge(bounds)
       p = position_bottom_plate_back(bounds)
-      p.y += @par[:stud_depth] + @par[:drywall_thickness]
+      # p.y += @par[:stud_depth] + @par[:drywall_thickness]
+      p.y = @panel.thickness - @par[:drywall_thickness] - @par[:stud_depth]
       p.z += @panel.height_ledge - @par[:buck_thickness]
       p
     end
