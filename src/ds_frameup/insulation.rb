@@ -35,7 +35,7 @@ module FrameUp
     end
 
     def fill(group, target)
-      target = shrink(group, target)
+      target = modifier_insulation(group, target)
       target = target.to_component
       name = 'insulation'.freeze
       target.definition.name = name.capitalize
@@ -60,9 +60,10 @@ module FrameUp
 
     # A modifier cannot be completely enclosed by the target
     # Reduce the size of the target so that modifiers are not enclosed
-    def shrink(group, target)
+    def modifier_insulation(group, target)
       copy = group.entities.add_instance(target.definition, IDENTITY)
       copy.make_unique
+      copy.name = 'modifier_insulation'
       faces = copy.entities.grep(Sketchup::Face)
       back_faces = []
       faces.each do |face|
@@ -76,8 +77,12 @@ module FrameUp
         end
       end
       back_faces.sort! { |a, b| a.area <=> b.area }
+      panel_thickness = back_faces[1].plane.last.abs
       back_faces[1].pushpull(-@par[:stud_depth] - @par[:drywall_thickness] - @par[:sheet_int_thickness])
-      back_faces[0].pushpull(-@par[:sheet_int_thickness])
+      # The depth of the ledge on panel is arbitrary. Calculate it here
+      target = panel_thickness - @par[:drywall_thickness] - @par[:stud_depth]
+      delta = target - back_faces[0].plane.last.abs
+      back_faces[0].pushpull(delta)
       copy
     end
 
