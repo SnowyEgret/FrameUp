@@ -24,8 +24,6 @@ module DS
       def initialize(parameters, group)
         @par = parameters
         @group = group
-        # TODO: Why is the original group name lost?
-        @group.name = 'Panel'
         @faces = init_faces
         @faces_hash = init_faces_hash
         init_dimensions
@@ -73,7 +71,7 @@ module DS
         p = position.clone
         p.y += thickness - @par[:drywall_thickness]
         # p.z += height_ledge
-        p.z += height_ledge unless position_z_ledge.zero?
+        p.z += height_ledge if ledge_at_bottom?
         p
       end
 
@@ -221,7 +219,12 @@ module DS
       def position_z_ledge
       # Issue #14 partly implemented
         # TODO: Error here. max if min is zero
-        face_back.bounds.min.z
+        # face_back.bounds.min.z
+        face_back.bounds.min.z == height_ledge ? 0.0 : face_back.bounds.max.z
+      end
+
+      def ledge_at_bottom?
+        position_z_ledge.zero?
       end
 
       def face_back
@@ -377,7 +380,8 @@ module DS
 
           # Issue #14 partly implemented
           # walls << Wall.new(@par, pos, len, ht, thickness, height_ledge)
-          walls << Wall.new(@par, pos, len, ht, thickness, height_ledge, position_z_ledge, corner_window_wall)
+          # walls << Wall.new(@par, pos, len, ht, thickness, height_ledge, position_z_ledge, corner_window_wall)
+          walls << Wall.new(@par, pos, len, ht, thickness, height_ledge, ledge_at_bottom?, corner_window_wall)
         end
         walls
       end

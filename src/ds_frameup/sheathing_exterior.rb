@@ -21,7 +21,7 @@ module FrameUp
 
       bounds = modifier.definition.bounds
       rows = (bounds.depth / @par[:sheet_ext_width]).to_i + 1
-      columns = (bounds.width / @par[:sheet_ext_length]).to_i + 1
+      columns = (bounds.width / @par[:sheet_ext_length]).to_i + 2
       sheets = @lumber.sheathing(group, @par[:sheet_ext_type], @position, rows, columns)
       intersect(sheets, modifier)
     end

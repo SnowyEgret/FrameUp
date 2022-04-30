@@ -19,7 +19,7 @@ module FrameUp
 
       bounds = modifier.definition.bounds
       rows = (bounds.depth / @par[:drywall_width]).to_i + 1
-      columns = (bounds.width / @par[:drywall_length]).to_i + 1
+      columns = (bounds.width / @par[:drywall_length]).to_i + 2
       sheets = @lumber.sheathing(group, @par[:drywall_type], @position, rows, columns)
       intersect(sheets, modifier)
     end

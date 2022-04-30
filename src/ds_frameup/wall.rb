@@ -19,7 +19,7 @@ module FrameUp
       height,
       thickness,
       height_ledge,
-      position_z_ledge,
+      is_ledge_at_bottom,
       corner_window_wall
     )
       @par = parameters
@@ -27,7 +27,7 @@ module FrameUp
       @height = height
       @thickness = thickness
       @height_ledge = height_ledge
-      @position_z_ledge = position_z_ledge
+      @is_ledge_at_bottom = is_ledge_at_bottom
       @corner_window_wall = corner_window_wall
 
       @stud_wall_front = StudWall.new(parameters, wall_f_position, length, wall_f_height)
@@ -54,7 +54,8 @@ module FrameUp
       p.y += @thickness - @par[:stud_depth] - @par[:strap_thickness] - @par[:sheet_ext_thickness] - @par[:drywall_thickness]
       # Issue #14 partly implemented
       # p.z += @height_ledge - @par[:buck_thickness]
-      p.z += @position_z_ledge - @par[:buck_thickness] unless @position_z_ledge.zero?
+      # p.z += @position_z_ledge - @par[:buck_thickness] unless @ledge_at_bottom?
+      p.z += @height_ledge - @par[:buck_thickness] if @is_ledge_at_bottom
       p
     end
 
@@ -65,7 +66,8 @@ module FrameUp
     def wall_b_height
       # Issue #14 partly implemented
       # wall_f_height + @par[:buck_thickness] - @height_ledge
-      if @position_z_ledge.zero? && @corner_window_wall
+      # if !@position_z_ledge.zero? && @corner_window_wall
+      if !@is_ledge_at_bottom && @corner_window_wall
         wall_f_height
       else
         wall_f_height + @par[:buck_thickness] - @height_ledge

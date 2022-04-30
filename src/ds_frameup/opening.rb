@@ -41,14 +41,24 @@ module DS
         @bounds_wall
       end
 
+      # def bounds_wall_back
+      #   min = @bounds_wall.min
+      #   min.y += thickness - @par[:stud_depth] - @par[:drywall_thickness]
+      #   min.z += @panel.height_ledge - @par[:buck_thickness]
+      #   max = @bounds_wall.max
+      #   max.y = min.y
+      #   Geom::BoundingBox.new.add(min, max)
+      # end
+
       def bounds_wall_back
         min = @bounds_wall.min
         min.y += thickness - @par[:stud_depth] - @par[:drywall_thickness]
-        # TODO: Move height_ledge to parameters
-        min.z += @panel.height_ledge - @par[:buck_thickness]
-        # min.z += @panel.height_ledge - @par[:stud_thickness] - @par[:buck_thickness]
+        # Issue #14 partly implemented
+        min.z += @panel.height_ledge - @par[:buck_thickness] if @panel.ledge_at_bottom?
         max = @bounds_wall.max
         max.y = min.y
+        # Issue #14 partly implemented
+        max.z -= @panel.height_ledge - @par[:buck_thickness] unless @panel.ledge_at_bottom?
         Geom::BoundingBox.new.add(min, max)
       end
 
