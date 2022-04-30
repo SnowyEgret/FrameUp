@@ -206,9 +206,6 @@ module DS
       end
 
       def height_back
-        # TODO: This will no longer work when ledge can be at top
-        # Instead, get z of bounds of back face
-        # height_front - @faces_hash[[0, 0, -1]][1].plane.last.abs
         face_back.bounds.depth
       end
 
@@ -217,9 +214,6 @@ module DS
       end
 
       def position_z_ledge
-      # Issue #14 partly implemented
-        # TODO: Error here. max if min is zero
-        # face_back.bounds.min.z
         face_back.bounds.min.z == height_ledge ? 0.0 : face_back.bounds.max.z
       end
 
@@ -378,9 +372,6 @@ module DS
             len -= 4 * @par[:stud_thickness] + @par[:buck_thickness]
           end
 
-          # Issue #14 partly implemented
-          # walls << Wall.new(@par, pos, len, ht, thickness, height_ledge)
-          # walls << Wall.new(@par, pos, len, ht, thickness, height_ledge, position_z_ledge, corner_window_wall)
           walls << Wall.new(@par, pos, len, ht, thickness, height_ledge, ledge_at_bottom?, corner_window_wall)
         end
         walls

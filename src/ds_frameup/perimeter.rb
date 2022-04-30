@@ -131,8 +131,9 @@ module FrameUp
       num_bucks = (length / @par[:sheet_length]).to_i
       bucks = @lumber.bucks_horizontal(group_bucks, position_bucks_horizontal_top(bounds), num_bucks)
       @lumber.top_plate(group_plates, position_top_plate_front(bounds), length)
-      @lumber.top_plate(group_plates, position_top_plate_back(bounds), length)
-      # Issue #14 partly implemented
+      space_for_back_plate = buck_t_width - @par[:stud_depth]
+      overide_stud_depth = space_for_back_plate < @par[:stud_depth] ? 3.5 : nil
+      @lumber.top_plate(group_plates, position_top_plate_back(bounds), length, overide_stud_depth)
       @lumber.top_plate(group_plates, position_plate_ledge(bounds), length) unless @panel.ledge_at_bottom?
       bucks
     end
@@ -141,15 +142,11 @@ module FrameUp
       length = bounds.width - 2 * @par[:buck_thickness]
       num_bucks = (length / @par[:sheet_length]).to_i
       bucks = @lumber.bucks_horizontal(group_bucks, position_bucks_horizontal_bottom(bounds), num_bucks)
-      # @lumber.bottom_plate(group_plates, position_bottom_plate_front(bounds), length)
-      # @lumber.bottom_plate(group_plates, position_bottom_plate_back(bounds), length)
-      # TODO: Check bottom_b_with to see if two current stud widths will fit
+      @lumber.bottom_plate(group_plates, position_bottom_plate_front(bounds), length)
       # 2X6 likely too deep if ledge is at bottom
-      overide_stud_depth = 3.5
-      @lumber.bottom_plate(group_plates, position_bottom_plate_front(bounds), length, overide_stud_depth)
+      space_for_back_plate = buck_b_width - @par[:stud_depth]
+      overide_stud_depth = space_for_back_plate < @par[:stud_depth] ? 3.5 : nil
       @lumber.bottom_plate(group_plates, position_bottom_plate_back(bounds), length, overide_stud_depth)
-      # @lumber.bottom_plate(group_plates, position_plate_ledge(bounds), length)
-      # Issue #14 partly implemented
       @lumber.bottom_plate(group_plates, position_plate_ledge(bounds), length) if @panel.ledge_at_bottom?
       bucks
     end
@@ -180,8 +177,6 @@ module FrameUp
     def position_top_plate_back(bounds)
       p = position_top_plate_front(bounds)
       unless @panel.ledge_at_bottom?
-        # TODO: Create method Panel#ledge_depth (Panel#ledge_position_z, Panel#ledge_height)
-        # TODO: check buck_b_width
         p.y = @panel.thickness - @par[:drywall_thickness] - @par[:stud_depth] - 3.5 - @par[:sheet_int_thickness]
       else
         p.y = @panel.thickness - @par[:drywall_thickness] - @par[:stud_depth]
@@ -206,30 +201,13 @@ module FrameUp
 
     def position_bottom_plate_back(bounds)
       p = position_bottom_plate_front(bounds)
-      # p.y = @panel.thickness - @par[:drywall_thickness] - 2 * @par[:stud_depth] - @par[:sheet_int_thickness]
-      # When ledge is at bottom studs must be 2x4 else they will overlap
       if @panel.ledge_at_bottom?
-        # TODO: Create method Panel#ledge_depth (Panel#ledge_position_z, Panel#ledge_height)
-        # TODO: check buck_b_width
         p.y = @panel.thickness - @par[:drywall_thickness] - @par[:stud_depth] - 3.5 - @par[:sheet_int_thickness]
       else
         p.y = @panel.thickness - @par[:drywall_thickness] - @par[:stud_depth]
       end
       p
     end
-
-    # Ledge plate either top or bottom
-    # TODO: Start from bounds not b
-    # def position_plate_ledge(bounds)
-    #   p = position_bottom_plate_back(bounds)
-    #   p.y = @panel.thickness - @par[:drywall_thickness] - @par[:stud_depth]
-    #   if @panel.ledge_at_bottom?
-    #     p.z += @panel.height_ledge - @par[:buck_thickness]
-    #   else
-    #     p.z -= @panel.height_ledge - @par[:buck_thickness]
-    #   end
-    #   p
-    # end
 
     def position_plate_ledge(bounds)
       p = bounds.min
@@ -249,7 +227,11 @@ module FrameUp
     end
 
     def buck_b_width
-      buck_width - @par[:stud_depth]
+      @panel.ledge_at_bottom? ? buck_width - @par[:stud_depth] : buck_width
+    end
+
+    def buck_t_width
+      @panel.ledge_at_bottom? ? buck_width : buck_width - @par[:stud_depth]
     end
   end
 end

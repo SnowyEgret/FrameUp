@@ -99,15 +99,15 @@ module DS
         _stud(group, position, length, 'king stud')
       end
 
-      def top_plate(group, position, length)
+      def top_plate(group, position, length, overide_stud_depth = nil)
         rotation = Geom::Transformation.rotation([0, 0, 0], [0, 1, 0], 90.degrees)
-        _stud(group, position, length, 'top plate', rotation)
+        _stud(group, position, length, 'top plate', rotation, overide_stud_depth)
       end
 
-      def bottom_plate(group, position, length, stud_depth = nil)
+      def bottom_plate(group, position, length, overide_stud_depth = nil)
         rotation = Geom::Transformation.rotation([0, 0, 0], [0, 1, 0], 90.degrees)
         # _stud(group, position, length, 'bottom plate', rotation)
-        _stud(group, position, length, 'bottom plate', rotation, stud_depth)
+        _stud(group, position, length, 'bottom plate', rotation, overide_stud_depth)
       end
 
       def sill_plate(group, position, length)
