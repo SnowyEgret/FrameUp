@@ -348,13 +348,11 @@ module DS
           when WALL_CORNER_WINDOW_FIRST
             len += @par[:buck_thickness]
             ht = sill_height(x, x_next) - 2 * @par[:stud_thickness] - 2 * @par[:buck_thickness]
-            # Issue #14 partly implemented
             corner_window_wall = true
           when WALL_CORNER_WINDOW_LAST
             pos.x -= 2 * @par[:buck_thickness]
             len += @par[:buck_thickness]
             ht = sill_height(x, x_next) - 2 * @par[:stud_thickness] - 2 * @par[:buck_thickness]
-            # Issue #14 partly implemented
             corner_window_wall = true
           when WALL_AFTER_CORNER_WINDOW
             len -= 2 * @par[:stud_thickness] + @par[:buck_thickness]

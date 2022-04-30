@@ -24,7 +24,7 @@ module DS
     EXTENSION = SketchupExtension.new('FrameUp', File.join(PLUGIN_DIR, 'main'))
     EXTENSION.creator     = 'Duncan Swain (SnowyEgret)'
     EXTENSION.description = 'Frames a double stud wall prefab panel'
-    EXTENSION.version     = '0.1.0'
+    EXTENSION.version     = '0.2.0'
     EXTENSION.copyright   = "2022, #{EXTENSION.creator}"
     Sketchup.register_extension(EXTENSION, true)
   end

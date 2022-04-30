@@ -98,17 +98,13 @@ module FrameUp
     end
 
     def self.save_defaults
-      Sketchup.active_model.set_attribute('defaults', :defaults, @parameters.defaults)
+      Sketchup.active_model.set_attribute('frameup_defaults', :framup_defaults, @parameters.defaults)
       # p read_defaults
     end
 
     def self.read_defaults
-      Sketchup.active_model.get_attribute('defaults', :defaults)
+      Sketchup.active_model.get_attribute('frameup_defaults', :framup_defaults)
     end
-
-    # def self.remove_defaults
-    #   Sketchup.active_model.set_attribute('defaults', nil, nil)
-    # end
 
     def self.frame_panel
       model = Sketchup.active_model
@@ -122,19 +118,17 @@ module FrameUp
     end
 
     def self.selection_valid?(selection)
-      # Temporarily commented out because SketchUp tray and console periodically refreshing
-      # begin
-      #   Panel.new(@parameters.parameters, selection.first)
-      # rescue
-      #   warn $ERROR_INFO
-      #   return false
-      # end
+      begin
+        Panel.new(@parameters.parameters, selection.first)
+      rescue
+        warn $ERROR_INFO
+        return false
+      end
       return true unless selection.length > 1
     end
 
     def self.test
       p read_defaults
-      # remove_defaults
       # p read_defaults
     end
   end
