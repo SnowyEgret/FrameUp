@@ -37,7 +37,7 @@ module FrameUp
     def fill(group, target)
       target = modifier_insulation(group, target)
       target = target.to_component
-      name = 'insulation'.freeze
+      name = 'insulation'
       target.definition.name = name.capitalize
       num_leaves = count_leaves(group, 0)
       progress_bar = ProgressBar.new(num_leaves, 'Filling insulation...')
