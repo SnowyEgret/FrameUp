@@ -43,6 +43,11 @@ module FrameUp
       progress_bar = ProgressBar.new(num_leaves, 'Filling insulation...')
       walk(group, target, progress_bar, 0)
       remove_material(target)
+      # TODO: This seems to work but may be a hack
+      # Method modifier_insulation sets the transform on the copy then
+      # a transform is set up in walk and then inversed here.
+      # Intuitively this is too complex... but works.
+      target.transform! group.transformation.inverse
       set_layer(target, name)
       set_color(target, name, COLOR_INSULATION)
     end
@@ -61,7 +66,8 @@ module FrameUp
     # A modifier cannot be completely enclosed by the target
     # Reduce the size of the target so that modifiers are not enclosed
     def modifier_insulation(group, target)
-      copy = group.entities.add_instance(target.definition, IDENTITY)
+      # copy = group.entities.add_instance(target.definition, IDENTITY)
+      copy = group.entities.add_instance(target.definition, target.transformation)
       copy.make_unique
       copy.name = 'modifier_insulation'
       faces = copy.entities.grep(Sketchup::Face)
