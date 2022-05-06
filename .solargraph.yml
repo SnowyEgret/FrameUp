@@ -1,7 +1,7 @@
 require_paths:
 - "C:/Ruby27-x64/lib/ruby/gems/2.7.0/gems"
 - "C:/Program Files/SketchUp/SketchUp 2022/Tools"
-- "C:/Users/Duncan/SketchUp Extensions/Panel/src"
+- "C:/Users/Duncan/SketchUp Extensions/FrameUp/src"
 
 require:
 - sketchup-api-stubs

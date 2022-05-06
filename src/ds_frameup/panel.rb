@@ -70,8 +70,8 @@ module DS
       def position_drywall
         p = position.clone
         p.y += thickness - @par[:drywall_thickness]
-        # p.z += height_ledge
-        p.z += height_ledge if ledge_at_bottom?
+        # p.z += ledge_height
+        p.z += ledge_height if ledge_at_bottom?
         p
       end
 
@@ -209,16 +209,20 @@ module DS
         face_back.bounds.depth
       end
 
-      def height_ledge
+      def ledge_height
         height_front - height_back
       end
 
-      def position_z_ledge
-        face_back.bounds.min.z == height_ledge ? 0.0 : face_back.bounds.max.z
+      def ledge_depth
+        @par[:drywall_thickness] + @par[:stud_depth]
+      end
+
+      def ledge_position_z
+        face_back.bounds.min.z == ledge_height ? 0.0 : face_back.bounds.max.z
       end
 
       def ledge_at_bottom?
-        position_z_ledge.zero?
+        ledge_position_z.zero?
       end
 
       def face_back
@@ -313,7 +317,7 @@ module DS
 
           openings << Opening.new(@par, bounds_wall, bounds_opening, self)
           # TODO: Simplify contstructor
-          # @openings << Opening.new(bounds_opening, height_wall, height_ledge)
+          # @openings << Opening.new(bounds_opening, height_wall, ledge_height)
         end
         openings
       end
@@ -335,7 +339,7 @@ module DS
           len = x_next.abs - pos.x
           ht = height_front - 2 * @par[:buck_thickness] - 2 * @par[:stud_thickness]
           # Issue #14 partly implemented
-          corner_window_wall = false
+          is_corner_window_wall = false
           # puts
           # p i
           # p x
@@ -348,12 +352,12 @@ module DS
           when WALL_CORNER_WINDOW_FIRST
             len += @par[:buck_thickness]
             ht = sill_height(x, x_next) - 2 * @par[:stud_thickness] - 2 * @par[:buck_thickness]
-            corner_window_wall = true
+            is_corner_window_wall = true
           when WALL_CORNER_WINDOW_LAST
             pos.x -= 2 * @par[:buck_thickness]
             len += @par[:buck_thickness]
             ht = sill_height(x, x_next) - 2 * @par[:stud_thickness] - 2 * @par[:buck_thickness]
-            corner_window_wall = true
+            is_corner_window_wall = true
           when WALL_AFTER_CORNER_WINDOW
             len -= 2 * @par[:stud_thickness] + @par[:buck_thickness]
           when WALL_BEFORE_CORNER_WINDOW
@@ -370,7 +374,7 @@ module DS
             len -= 4 * @par[:stud_thickness] + @par[:buck_thickness]
           end
 
-          walls << Wall.new(@par, pos, len, ht, thickness, height_ledge, ledge_at_bottom?, corner_window_wall)
+          walls << Wall.new(@par, pos, len, ht, thickness, ledge_height, ledge_at_bottom?, is_corner_window_wall)
         end
         walls
       end

@@ -15,7 +15,6 @@ module DS
       # def initialize(bounds_opening, height_wall, height_ledge)
       # def initialize(bounds_wall, bounds_opening, height_ledge)
       def initialize(parameters, bounds_wall, bounds_opening, panel)
-      # def initialize(parameters, bounds_wall, bounds_opening)
         @par = parameters
         @panel = panel
         @bounds_wall = bounds_wall
@@ -41,24 +40,13 @@ module DS
         @bounds_wall
       end
 
-      # def bounds_wall_back
-      #   min = @bounds_wall.min
-      #   min.y += thickness - @par[:stud_depth] - @par[:drywall_thickness]
-      #   min.z += @panel.height_ledge - @par[:buck_thickness]
-      #   max = @bounds_wall.max
-      #   max.y = min.y
-      #   Geom::BoundingBox.new.add(min, max)
-      # end
-
       def bounds_wall_back
         min = @bounds_wall.min
         min.y += thickness - @par[:stud_depth] - @par[:drywall_thickness]
-        # Issue #14 partly implemented
-        min.z += @panel.height_ledge - @par[:buck_thickness] if @panel.ledge_at_bottom?
+        min.z += @panel.ledge_height - @par[:buck_thickness] if @panel.ledge_at_bottom?
         max = @bounds_wall.max
         max.y = min.y
-        # Issue #14 partly implemented
-        max.z -= @panel.height_ledge - @par[:buck_thickness] unless @panel.ledge_at_bottom?
+        max.z -= @panel.ledge_height - @par[:buck_thickness] unless @panel.ledge_at_bottom?
         Geom::BoundingBox.new.add(min, max)
       end
 

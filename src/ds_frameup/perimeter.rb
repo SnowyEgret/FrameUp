@@ -89,7 +89,7 @@ module FrameUp
       if face.plane.last.abs == @panel.thickness
         face.pushpull(-@par[:drywall_thickness])
       else
-        target = @panel.thickness - @par[:drywall_thickness] - @par[:stud_depth]
+        target = @panel.thickness - @panel.ledge_depth
         delta = target - face.plane.last.abs
         face.pushpull(delta)
       end
@@ -177,9 +177,9 @@ module FrameUp
     def position_top_plate_back(bounds)
       p = position_top_plate_front(bounds)
       unless @panel.ledge_at_bottom?
-        p.y = @panel.thickness - @par[:drywall_thickness] - @par[:stud_depth] - 3.5 - @par[:sheet_int_thickness]
+        p.y = @panel.thickness - @panel.ledge_depth - 3.5 - @par[:sheet_int_thickness]
       else
-        p.y = @panel.thickness - @par[:drywall_thickness] - @par[:stud_depth]
+        p.y = @panel.thickness - @panel.ledge_depth
       end
       p
     end
@@ -202,9 +202,9 @@ module FrameUp
     def position_bottom_plate_back(bounds)
       p = position_bottom_plate_front(bounds)
       if @panel.ledge_at_bottom?
-        p.y = @panel.thickness - @par[:drywall_thickness] - @par[:stud_depth] - 3.5 - @par[:sheet_int_thickness]
+        p.y = @panel.thickness - @panel.ledge_depth - 3.5 - @par[:sheet_int_thickness]
       else
-        p.y = @panel.thickness - @par[:drywall_thickness] - @par[:stud_depth]
+        p.y = @panel.thickness - @panel.ledge_depth
       end
       p
     end
@@ -212,11 +212,11 @@ module FrameUp
     def position_plate_ledge(bounds)
       p = bounds.min
       p.x = @par[:buck_thickness]
-      p.y = @panel.thickness - @par[:drywall_thickness] - @par[:stud_depth]
+      p.y = @panel.thickness - @panel.ledge_depth
       if @panel.ledge_at_bottom?
-        p.z = @panel.height_ledge + @par[:stud_thickness]
+        p.z = @panel.ledge_height + @par[:stud_thickness]
       else
-        p.z = @panel.position_z_ledge
+        p.z = @panel.ledge_position_z
       end
       p
     end
