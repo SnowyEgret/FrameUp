@@ -1,7 +1,9 @@
 module DS
 module FrameUp
   module Util
-    def set_layer(group, name)
+    def set_layer(group, name_frozen)
+      name = +name_frozen
+      name.prepend('frameup.')
       layers = Sketchup.active_model.layers
       layer = layers[name]
       layer = layers.add(name) if layer.nil?

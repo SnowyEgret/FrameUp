@@ -97,7 +97,7 @@ module FrameUp
       ents = model.active_entities
       model.start_operation('Test', true)
 
-      targets = ents.select { |ent| ent.name == 'target' }
+      # targets = ents.select { |ent| ent.name == 'target' }
       modifiers = ents.select { |ent| ent.name == 'modifiers' }
       insulation = Insulation.new(Parameters.new.parameters)
 

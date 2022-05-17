@@ -8,15 +8,6 @@ module DS
     DIM_5_8 = 0.625
     DIM_3_4 = 0.75
 
-    # WALL_CORNER_WINDOW_FIRST = 0
-    # WALL_CORNER_WINDOW_LAST = 1
-    # WALL_AFTER_CORNER_WINDOW = 2
-    # WALL_BEFORE_CORNER_WINDOW = 3
-    # WALL = 4
-    # WALL_FIRST = 5
-    # WALL_LAST = 6
-    # WALL_OPENING = 7
-
     # Set to strings for debugging
     WALL = 'WALL'
     WALL_CORNER_WINDOW_FIRST = 'WALL_CORNER_WINDOW_FIRST'
@@ -29,12 +20,12 @@ module DS
 
     COLOR_SHEATHING = [241, 239, 222].freeze
     COLOR_STRAPPING = [241, 239, 222].freeze
-    COLOR_FRAMING = [215, 208, 202].freeze
+    COLOR_FRAMING = [229, 223, 209].freeze
     COLOR_BUCK = [171, 103, 80].freeze
     COLOR_DRYWALL = [239, 239, 239].freeze
     COLOR_SHEET_INT = [239, 239, 239].freeze
     COLOR_SHEET_EXT = [239, 239, 239].freeze
-    COLOR_INSULATION = [239, 239, 239].freeze
+    COLOR_INSULATION = [180, 178, 167].freeze
 
     CREATE_SUBGROUP = true
   end

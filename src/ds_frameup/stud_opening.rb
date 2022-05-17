@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module DS
-  module FrameUp
+module FrameUp
     class StudOpening
       # TODO: Simplify constructor
       # def initialize(bounds, height_wall)
